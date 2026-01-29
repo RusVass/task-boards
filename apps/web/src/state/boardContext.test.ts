@@ -11,7 +11,7 @@ type Card = {
 
 const baseBoard = { name: "Board", publicId: "b1" };
 
-function createCard(overrides: Partial<Card> = {}): Card {
+const createCard = (overrides: Partial<Card> = {}): Card => {
   return {
     _id: "c1",
     title: "Title",
@@ -20,7 +20,7 @@ function createCard(overrides: Partial<Card> = {}): Card {
     order: 0,
     ...overrides,
   };
-}
+};
 
 describe("boardReducer", () => {
   it("updates a single card on UPDATE_CARD", () => {

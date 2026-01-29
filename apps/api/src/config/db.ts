@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { env } from './env';
 
-export async function connectDb(): Promise<void> {
+export const connectDb = async (): Promise<void> => {
   mongoose.set('strictQuery', true);
 
   await mongoose.connect(env.MONGO_URI);
@@ -13,4 +13,4 @@ export async function connectDb(): Promise<void> {
   mongoose.connection.on('error', (err) => {
     console.error('Mongo connection error', err);
   });
-}
+};

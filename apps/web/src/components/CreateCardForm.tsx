@@ -7,29 +7,32 @@ import {
   type FormValues,
 } from "./createCardFormHelpers";
 
-export function CreateCardForm({ onSubmit, placeholderTitle }: Props): JSX.Element {
+export const CreateCardForm = ({
+  onSubmit,
+  placeholderTitle,
+}: Props): JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
 
   const { register, handleSubmit, reset } = useForm<FormValues>({
     defaultValues: { title: "", description: "" },
   });
 
-  async function submit(values: FormValues) {
+  const submit = async (values: FormValues): Promise<void> => {
     const payload = buildCardPayload(values);
     if (!payload) return;
     await onSubmit(payload);
     reset();
     setIsOpen(false);
-  }
+  };
 
-  function open() {
+  const open = (): void => {
     setIsOpen(true);
-  }
+  };
 
-  function close() {
+  const close = (): void => {
     reset();
     setIsOpen(false);
-  }
+  };
 
   return (
     <div className={styles.wrapper}>
@@ -61,7 +64,7 @@ export function CreateCardForm({ onSubmit, placeholderTitle }: Props): JSX.Eleme
       )}
     </div>
   );
-}
+};
 
 interface Props {
   onSubmit: (data: CardPayload) => Promise<void> | void;

@@ -35,10 +35,10 @@ const initialState: BoardState = {
   loading: false,
 };
 
-export function boardReducer(
+export const boardReducer = (
   state: BoardState,
   action: BoardAction,
-): BoardState {
+): BoardState => {
   switch (action.type) {
     case "LOAD_START":
       return { ...state, loading: true };
@@ -77,7 +77,7 @@ export function boardReducer(
     default:
       return state;
   }
-}
+};
 
 interface BoardContextValue {
   state: BoardState;
@@ -86,7 +86,11 @@ interface BoardContextValue {
 
 const BoardContext = createContext<BoardContextValue | null>(null);
 
-export function BoardProvider({ children }: { children: React.ReactNode }) {
+export const BoardProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}): JSX.Element => {
   const [state, dispatch] = useReducer(boardReducer, initialState);
 
   return (
@@ -94,13 +98,13 @@ export function BoardProvider({ children }: { children: React.ReactNode }) {
       {children}
     </BoardContext.Provider>
   );
-}
+};
 
-export function useBoard() {
+export const useBoard = (): BoardContextValue => {
   const context = useContext(BoardContext);
   if (!context) {
     throw new Error("useBoard must be used inside BoardProvider");
   }
 
   return context;
-}
+};

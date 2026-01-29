@@ -8,13 +8,13 @@ import {
   deleteBoardCascade,
 } from './boards.service';
 
-export async function createBoardHandler(req: Request, res: Response) {
+export const createBoardHandler = async (req: Request, res: Response) => {
   const data = createBoardSchema.parse(req.body);
   const board = await createBoard(data.name);
   res.status(201).json(board);
-}
+};
 
-export async function getBoardHandler(req: Request, res: Response) {
+export const getBoardHandler = async (req: Request, res: Response) => {
   const data = await getBoardWithCards(req.params.publicId);
 
   if (!data) {
@@ -23,9 +23,9 @@ export async function getBoardHandler(req: Request, res: Response) {
   }
 
   res.json(data);
-}
+};
 
-export async function updateBoardHandler(req: Request, res: Response) {
+export const updateBoardHandler = async (req: Request, res: Response) => {
   const data = updateBoardSchema.parse(req.body);
   const board = await updateBoard(req.params.publicId, data.name);
 
@@ -35,9 +35,9 @@ export async function updateBoardHandler(req: Request, res: Response) {
   }
 
   res.json(board);
-}
+};
 
-export async function deleteBoardHandler(req: Request, res: Response) {
+export const deleteBoardHandler = async (req: Request, res: Response) => {
   const board = await deleteBoardCascade(req.params.publicId);
 
   if (!board) {
@@ -46,4 +46,4 @@ export async function deleteBoardHandler(req: Request, res: Response) {
   }
 
   res.status(204).send();
-}
+};

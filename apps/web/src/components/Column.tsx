@@ -2,7 +2,7 @@ import { useDroppable } from '@dnd-kit/core';
 import type { ReactNode } from 'react';
 import styles from './Column.module.scss';
 
-export function Column({ title, id, children }: ColumnProps) {
+export const Column = ({ title, id, children }: ColumnProps): JSX.Element => {
   const { setNodeRef } = useDroppable({ id });
 
   return (
@@ -11,7 +11,7 @@ export function Column({ title, id, children }: ColumnProps) {
       {children}
     </div>
   );
-}
+};
 
 interface ColumnProps {
   id: string;

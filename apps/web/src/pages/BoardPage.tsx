@@ -24,19 +24,19 @@ type CardInput = {
   description?: string;
 };
 
-function isColumnType(value: string): value is ColumnType {
+const isColumnType = (value: string): value is ColumnType => {
   return columns.includes(value as ColumnType);
-}
+};
 
-export function BoardPage() {
+export const BoardPage = (): JSX.Element => {
   const [boardId, setBoardId] = useState("");
   const { state, dispatch } = useBoard();
 
-  async function loadBoard() {
+  const loadBoard = async (): Promise<void> => {
     dispatch({ type: "LOAD_START" });
     const response = await getBoard(boardId);
     dispatch({ type: "LOAD_SUCCESS", payload: response.data });
-  }
+  };
 
   const todo = state.cards.filter((card) => card.column === "todo");
   const inProgress = state.cards.filter(
@@ -44,7 +44,7 @@ export function BoardPage() {
   );
   const done = state.cards.filter((card) => card.column === "done");
 
-  async function onDragEnd(event: DragEndEvent) {
+  const onDragEnd = async (event: DragEndEvent): Promise<void> => {
     const { active, over } = event;
     if (!over) return;
 
@@ -62,53 +62,58 @@ export function BoardPage() {
     if (!state.board) return;
 
     await reorderCards(state.board.publicId, buildReorderPayload(normalized));
-  }
+  };
 
-  async function handleCreateCard(
+  const handleCreateCard = async (
     column: "todo" | "in_progress" | "done",
     data: CardInput,
-  ) {
+  ): Promise<void> => {
     if (!state.board) return;
 
     const res = await createCard(state.board.publicId, { ...data, column });
     dispatch({ type: "ADD_CARD", payload: { card: res.data } });
-  }
+  };
 
-  async function handleDeleteCard(cardId: string) {
+  const handleDeleteCard = async (cardId: string): Promise<void> => {
     if (!state.board) return;
     await deleteCard(state.board.publicId, cardId);
     dispatch({ type: "DELETE_CARD", payload: { cardId } });
-  }
+  };
 
-  async function handleUpdateCard(cardId: string, data: CardInput) {
+  const handleUpdateCard = async (
+    cardId: string,
+    data: CardInput,
+  ): Promise<void> => {
     if (!state.board) return;
     const res = await updateCard(state.board.publicId, cardId, data);
     dispatch({ type: "UPDATE_CARD", payload: { card: res.data } });
-  }
+  };
 
-  function handleBoardIdChange(event: ChangeEvent<HTMLInputElement>) {
+  const handleBoardIdChange = (
+    event: ChangeEvent<HTMLInputElement>,
+  ): void => {
     setBoardId(event.target.value);
-  }
+  };
 
-  function handleCreateTodo(data: CardInput) {
+  const handleCreateTodo = (data: CardInput): Promise<void> => {
     return handleCreateCard("todo", data);
-  }
+  };
 
-  function handleCreateInProgress(data: CardInput) {
+  const handleCreateInProgress = (data: CardInput): Promise<void> => {
     return handleCreateCard("in_progress", data);
-  }
+  };
 
-  function handleCreateDone(data: CardInput) {
+  const handleCreateDone = (data: CardInput): Promise<void> => {
     return handleCreateCard("done", data);
-  }
+  };
 
-  function createEditHandler(cardId: string) {
+  const createEditHandler = (cardId: string) => {
     return (data: CardInput) => handleUpdateCard(cardId, data);
-  }
+  };
 
-  function createDeleteHandler(cardId: string) {
+  const createDeleteHandler = (cardId: string) => {
     return () => handleDeleteCard(cardId);
-  }
+  };
 
   return (
     <div className={styles.page}>
@@ -176,5 +181,5 @@ export function BoardPage() {
       )}
     </div>
   );
-}
+};
 

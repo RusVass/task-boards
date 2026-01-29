@@ -1,6 +1,11 @@
 import type { NextFunction, Request, Response } from 'express';
 
-export function errorHandler(err: unknown, req: Request, res: Response, next: NextFunction): void {
+export const errorHandler = (
+  err: unknown,
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
   console.error('Unhandled error', err);
 
   if (res.headersSent) {
@@ -9,4 +14,4 @@ export function errorHandler(err: unknown, req: Request, res: Response, next: Ne
   }
 
   res.status(500).json({ message: 'Internal Server Error' });
-}
+};

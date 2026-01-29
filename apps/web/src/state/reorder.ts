@@ -8,7 +8,7 @@ type Card = {
 
 const columns: ColumnType[] = ["todo", "in_progress", "done"];
 
-export function normalizeOrders(cards: Card[]): Card[] {
+export const normalizeOrders = (cards: Card[]): Card[] => {
   const next: Card[] = [];
 
   for (const col of columns) {
@@ -22,13 +22,15 @@ export function normalizeOrders(cards: Card[]): Card[] {
   }
 
   return next;
-}
+};
 
-export function buildReorderPayload(cards: Card[]) {
+export const buildReorderPayload = (
+  cards: Card[],
+): { cardId: string; column: ColumnType }[] => {
   const sorted = [...cards].sort((a, b) => {
     if (a.column === b.column) return a.order - b.order;
     return a.column.localeCompare(b.column);
   });
 
   return sorted.map((c) => ({ cardId: c._id, column: c.column }));
-}
+};

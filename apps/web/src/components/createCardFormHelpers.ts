@@ -1,4 +1,6 @@
-export function buildCardPayload(values: FormValues): CardPayload | null {
+export const buildCardPayload = (
+  values: FormValues,
+): CardPayload | null => {
   const title = values.title.trim();
   if (!title) return null;
 
@@ -6,7 +8,7 @@ export function buildCardPayload(values: FormValues): CardPayload | null {
     title,
     description: values.description.trim(),
   };
-}
+};
 
 export interface FormValues {
   title: string;

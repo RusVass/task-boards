@@ -1,14 +1,14 @@
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
-function ensureEnv() {
+const ensureEnv = () => {
   if (!process.env.CORS_ORIGIN) {
     process.env.CORS_ORIGIN = 'http://localhost:3000';
   }
   if (!process.env.MONGO_URI) {
     process.env.MONGO_URI = 'mongodb://localhost:27017/test';
   }
-}
+};
 
 ensureEnv();
 

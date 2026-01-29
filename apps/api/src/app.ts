@@ -6,7 +6,7 @@ import { env } from './config/env';
 import { boardsRouter } from './modules/boards/boards.routes';
 import { errorHandler } from './middlewares/errorHandler';
 
-export function createApp() {
+export const createApp = () => {
   const app = express();
 
   app.use(helmet());
@@ -23,4 +23,4 @@ export function createApp() {
   app.use(errorHandler);
 
   return app;
-}
+};

@@ -18,7 +18,7 @@ interface GetBoardResponse {
   cards: CardResponse[];
 }
 
-function getCardId(card: CardResponse): string {
+const getCardId = (card: CardResponse): string => {
   if (card._id) {
     return card._id;
   }
@@ -26,7 +26,7 @@ function getCardId(card: CardResponse): string {
     return card.id;
   }
   throw new Error('Card id is missing');
-}
+};
 
 const app = createApp();
 

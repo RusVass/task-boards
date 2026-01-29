@@ -11,7 +11,13 @@ type Props = {
   onDelete: () => Promise<void>;
 };
 
-export function Card({ id, title, description, onEdit, onDelete }: Props) {
+export const Card = ({
+  id,
+  title,
+  description,
+  onEdit,
+  onDelete,
+}: Props): JSX.Element => {
   const [isEditing, setIsEditing] = useState(false);
   const [nextTitle, setNextTitle] = useState(title);
   const [nextDescription, setNextDescription] = useState(description ?? '');
@@ -21,36 +27,40 @@ export function Card({ id, title, description, onEdit, onDelete }: Props) {
     disabled: isEditing,
   });
 
-  async function handleSave() {
+  const handleSave = async (): Promise<void> => {
     await onEdit({ title: nextTitle, description: nextDescription });
     setIsEditing(false);
-  }
+  };
 
-  function handleToggleEdit() {
+  const handleToggleEdit = (): void => {
     setIsEditing((value) => !value);
-  }
+  };
 
-  function handleCancelEdit() {
+  const handleCancelEdit = (): void => {
     setIsEditing(false);
-  }
+  };
 
-  function handleTitleChange(event: ChangeEvent<HTMLInputElement>) {
+  const handleTitleChange = (event: ChangeEvent<HTMLInputElement>): void => {
     setNextTitle(event.target.value);
-  }
+  };
 
-  function handleDescriptionChange(event: ChangeEvent<HTMLTextAreaElement>) {
+  const handleDescriptionChange = (
+    event: ChangeEvent<HTMLTextAreaElement>,
+  ): void => {
     setNextDescription(event.target.value);
-  }
+  };
 
-  function handleActionPointerDown(event: React.PointerEvent<HTMLButtonElement>) {
+  const handleActionPointerDown = (
+    event: React.PointerEvent<HTMLButtonElement>,
+  ): void => {
     event.stopPropagation();
-  }
+  };
 
-  async function handleDelete() {
+  const handleDelete = async (): Promise<void> => {
     const ok = window.confirm('Delete this card');
     if (!ok) return;
     await onDelete();
-  }
+  };
 
   const dragStyle = transform
     ? { transform: `translate(${transform.x}px, ${transform.y}px)` }
@@ -73,27 +83,29 @@ export function Card({ id, title, description, onEdit, onDelete }: Props) {
           </div>
         )}
 
-        <div className={styles.actions}>
-          <button
-            type="button"
-            className={styles.iconBtn}
-            onClick={handleToggleEdit}
-            onPointerDown={handleActionPointerDown}
-            aria-label="Edit"
-          >
-            <FaEdit />
-          </button>
+        {!isEditing && (
+          <div className={styles.actions}>
+            <button
+              type="button"
+              className={styles.iconBtn}
+              onClick={handleToggleEdit}
+              onPointerDown={handleActionPointerDown}
+              aria-label="Edit"
+            >
+              <FaEdit />
+            </button>
 
-          <button
-            type="button"
-            className={styles.iconBtnDanger}
-            onClick={handleDelete}
-            onPointerDown={handleActionPointerDown}
-            aria-label="Delete"
-          >
-            <FaTrash />
-          </button>
-        </div>
+            <button
+              type="button"
+              className={styles.iconBtnDanger}
+              onClick={handleDelete}
+              onPointerDown={handleActionPointerDown}
+              aria-label="Delete"
+            >
+              <FaTrash />
+            </button>
+          </div>
+        )}
       </div>
 
       {!isEditing && <div className={styles.description}>{description}</div>}
@@ -122,4 +134,4 @@ export function Card({ id, title, description, onEdit, onDelete }: Props) {
       )}
     </div>
   );
-}
+};

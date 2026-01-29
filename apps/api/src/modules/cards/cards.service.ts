@@ -1,11 +1,11 @@
 import { CardModel } from './card.model';
 
-export async function createCard(params: {
+export const createCard = async (params: {
   boardId: string;
   column: string;
   title: string;
   description?: string;
-}) {
+}) => {
   const lastCard = await CardModel.find({ boardId: params.boardId, column: params.column })
     .sort({ order: -1 })
     .limit(1)
@@ -20,20 +20,23 @@ export async function createCard(params: {
     title: params.title,
     description: params.description,
   });
-}
+};
 
-export async function updateCard(cardId: string, data: { title: string; description?: string }) {
+export const updateCard = async (
+  cardId: string,
+  data: { title: string; description?: string },
+) => {
   return CardModel.findByIdAndUpdate(cardId, data, { new: true }).lean();
-}
+};
 
-export async function deleteCard(cardId: string) {
+export const deleteCard = async (cardId: string) => {
   return CardModel.findByIdAndDelete(cardId);
-}
+};
 
-export async function reorderCards(
+export const reorderCards = async (
   boardId: string,
   items: { cardId: string; column: string }[],
-) {
+) => {
   const operations = items.map((item, index) => ({
     updateOne: {
       filter: { _id: item.cardId, boardId },
@@ -44,4 +47,4 @@ export async function reorderCards(
   if (operations.length === 0) return;
 
   await CardModel.bulkWrite(operations);
-}
+};

@@ -1,18 +1,14 @@
 "use client";
 
 import { createContext, useContext, useReducer } from "react";
-
-type ColumnType = "todo" | "in_progress" | "done";
+import {
+  createBoard as createBoardApi,
+  deleteBoard as deleteBoardApi,
+  renameBoard as renameBoardApi,
+} from "../api/boardsApi";
+import type { Card, ColumnType } from "../types/card";
 
 type Board = { name: string; publicId: string };
-
-type Card = {
-  _id: string;
-  title: string;
-  description?: string;
-  column: ColumnType;
-  order: number;
-};
 
 interface BoardState {
   board: Board | null;
@@ -27,7 +23,9 @@ type BoardAction =
   | { type: "SET_CARDS"; payload: { cards: Card[] } }
   | { type: "ADD_CARD"; payload: { card: Card } }
   | { type: "UPDATE_CARD"; payload: { card: Card } }
-  | { type: "DELETE_CARD"; payload: { cardId: string } };
+  | { type: "DELETE_CARD"; payload: { cardId: string } }
+  | { type: "UPDATE_BOARD_NAME"; payload: string }
+  | { type: "RESET" };
 
 const initialState: BoardState = {
   board: null,
@@ -74,6 +72,12 @@ export const boardReducer = (
       const nextCards = state.cards.filter((c) => c._id !== action.payload.cardId);
       return { ...state, cards: nextCards };
     }
+    case "UPDATE_BOARD_NAME": {
+      if (!state.board) return state;
+      return { ...state, board: { ...state.board, name: action.payload } };
+    }
+    case "RESET":
+      return initialState;
     default:
       return state;
   }
@@ -82,6 +86,9 @@ export const boardReducer = (
 interface BoardContextValue {
   state: BoardState;
   dispatch: React.Dispatch<BoardAction>;
+  createBoard: (name: string) => Promise<string>;
+  renameBoard: (publicId: string, name: string) => Promise<void>;
+  deleteBoard: (publicId: string) => Promise<void>;
 }
 
 const BoardContext = createContext<BoardContextValue | null>(null);
@@ -93,8 +100,29 @@ export const BoardProvider = ({
 }): JSX.Element => {
   const [state, dispatch] = useReducer(boardReducer, initialState);
 
+  const createBoard = async (name: string): Promise<string> => {
+    const res = await createBoardApi(name);
+    dispatch({
+      type: "LOAD_SUCCESS",
+      payload: { board: res.data, cards: [] },
+    });
+    return res.data.publicId;
+  };
+
+  const renameBoard = async (publicId: string, name: string): Promise<void> => {
+    const res = await renameBoardApi(publicId, name);
+    dispatch({ type: "UPDATE_BOARD_NAME", payload: res.data.name });
+  };
+
+  const deleteBoard = async (publicId: string): Promise<void> => {
+    await deleteBoardApi(publicId);
+    dispatch({ type: "RESET" });
+  };
+
   return (
-    <BoardContext.Provider value={{ state, dispatch }}>
+    <BoardContext.Provider
+      value={{ state, dispatch, createBoard, renameBoard, deleteBoard }}
+    >
       {children}
     </BoardContext.Provider>
   );

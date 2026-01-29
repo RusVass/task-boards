@@ -85,4 +85,48 @@ describe("boardReducer", () => {
 
     expect(next.cards[0]?.column).toBe("done");
   });
+
+  it("updates board name on UPDATE_BOARD_NAME", () => {
+    const state = {
+      board: baseBoard,
+      cards: [],
+      loading: false,
+    };
+
+    const next = boardReducer(state, {
+      type: "UPDATE_BOARD_NAME",
+      payload: "Next Board",
+    });
+
+    expect(next.board?.name).toBe("Next Board");
+  });
+
+  it("keeps state when UPDATE_BOARD_NAME has no board", () => {
+    const state = {
+      board: null,
+      cards: [createCard()],
+      loading: false,
+    };
+
+    const next = boardReducer(state, {
+      type: "UPDATE_BOARD_NAME",
+      payload: "Next Board",
+    });
+
+    expect(next).toEqual(state);
+  });
+
+  it("resets state on RESET", () => {
+    const state = {
+      board: baseBoard,
+      cards: [createCard(), createCard({ _id: "c2" })],
+      loading: true,
+    };
+
+    const next = boardReducer(state, { type: "RESET" });
+
+    expect(next.board).toBeNull();
+    expect(next.cards).toHaveLength(0);
+    expect(next.loading).toBe(false);
+  });
 });

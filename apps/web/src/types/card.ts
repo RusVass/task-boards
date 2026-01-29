@@ -1,4 +1,6 @@
-export type ColumnType = "todo" | "in_progress" | "done";
+export const CARD_COLUMNS = ["todo", "in_progress", "done"] as const;
+
+export type ColumnType = (typeof CARD_COLUMNS)[number];
 
 export type Card = {
   _id: string;

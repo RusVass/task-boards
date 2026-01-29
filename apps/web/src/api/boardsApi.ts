@@ -32,6 +32,17 @@ export const createBoard = (name: string): ApiResponse<Board> => {
   return httpClient.post<Board>("/boards", { name });
 };
 
+export const renameBoard = (
+  publicId: string,
+  name: string,
+): ApiResponse<Board> => {
+  return httpClient.patch<Board>(`/boards/${publicId}`, { name });
+};
+
+export const deleteBoard = (publicId: string): ApiResponse<void> => {
+  return httpClient.delete<void>(`/boards/${publicId}`);
+};
+
 export const createCard = (
   publicId: string,
   data: { title: string; description?: string; column: ColumnType },

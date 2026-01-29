@@ -1,7 +1,8 @@
-import { useState, type ChangeEvent } from 'react';
-import { useDraggable } from '@dnd-kit/core';
-import { FaTrash, FaEdit } from 'react-icons/fa';
-import styles from './Card.module.scss';
+import { useState, type ChangeEvent } from "react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { FaTrash, FaEdit } from "react-icons/fa";
+import styles from "./Card.module.scss";
 
 type Props = {
   id: string;
@@ -22,10 +23,11 @@ export const Card = ({
   const [nextTitle, setNextTitle] = useState(title);
   const [nextDescription, setNextDescription] = useState(description ?? '');
 
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id,
-    disabled: isEditing,
-  });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+    useSortable({
+      id,
+      disabled: isEditing,
+    });
 
   const handleSave = async (): Promise<void> => {
     await onEdit({ title: nextTitle, description: nextDescription });
@@ -57,14 +59,16 @@ export const Card = ({
   };
 
   const handleDelete = async (): Promise<void> => {
-    const ok = window.confirm('Delete this card');
+    const ok = window.confirm("Delete this card");
     if (!ok) return;
     await onDelete();
   };
 
-  const dragStyle = transform
-    ? { transform: `translate(${transform.x}px, ${transform.y}px)` }
-    : undefined;
+  const dragStyle = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.6 : 1,
+  };
 
   return (
     <div

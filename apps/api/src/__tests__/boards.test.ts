@@ -74,4 +74,48 @@ describe('boards', () => {
     expect(moved?.column).toBe('done');
     expect(moved?.order).toBe(0);
   });
+
+  test('reorder assigns order per column', async () => {
+    const created = await request(app).post('/api/boards').send({ name: 'Board B' });
+    const publicId = created.body.publicId as string;
+
+    const todoOne = await request(app)
+      .post(`/api/boards/${publicId}/cards`)
+      .send({ title: 'Todo 1', column: 'todo' });
+    const todoTwo = await request(app)
+      .post(`/api/boards/${publicId}/cards`)
+      .send({ title: 'Todo 2', column: 'todo' });
+    const doneOne = await request(app)
+      .post(`/api/boards/${publicId}/cards`)
+      .send({ title: 'Done 1', column: 'done' });
+
+    const todoOneId = getCardId(todoOne.body as CardResponse);
+    const todoTwoId = getCardId(todoTwo.body as CardResponse);
+    const doneOneId = getCardId(doneOne.body as CardResponse);
+
+    const reorder = await request(app)
+      .put(`/api/boards/${publicId}/cards/reorder`)
+      .send({
+        items: [
+          { cardId: todoOneId, column: 'todo' },
+          { cardId: todoTwoId, column: 'todo' },
+          { cardId: doneOneId, column: 'done' },
+        ],
+      });
+
+    expect(reorder.status).toBe(200);
+
+    const res = await request(app).get(`/api/boards/${publicId}`);
+    const body = res.body as GetBoardResponse;
+    const todoOneCard = body.cards.find((item) => getCardId(item) === todoOneId);
+    const todoTwoCard = body.cards.find((item) => getCardId(item) === todoTwoId);
+    const doneOneCard = body.cards.find((item) => getCardId(item) === doneOneId);
+
+    expect(todoOneCard?.column).toBe('todo');
+    expect(todoOneCard?.order).toBe(0);
+    expect(todoTwoCard?.column).toBe('todo');
+    expect(todoTwoCard?.order).toBe(1);
+    expect(doneOneCard?.column).toBe('done');
+    expect(doneOneCard?.order).toBe(0);
+  });
 });

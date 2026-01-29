@@ -24,3 +24,8 @@ export const getMoveCardPayload = (
 
   return { cardId, column };
 };
+
+export const getTrimmedNonEmptyText = (value: string): string | null => {
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
+};

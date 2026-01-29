@@ -37,12 +37,19 @@ export const reorderCards = async (
   boardId: string,
   items: { cardId: string; column: string }[],
 ) => {
-  const operations = items.map((item, index) => ({
-    updateOne: {
-      filter: { _id: item.cardId, boardId },
-      update: { column: item.column, order: index },
-    },
-  }));
+  const orderByColumn = new Map<string, number>();
+
+  const operations = items.map((item) => {
+    const nextOrder = orderByColumn.get(item.column) ?? 0;
+    orderByColumn.set(item.column, nextOrder + 1);
+
+    return {
+      updateOne: {
+        filter: { _id: item.cardId, boardId },
+        update: { column: item.column, order: nextOrder },
+      },
+    };
+  });
 
   if (operations.length === 0) return;
 
